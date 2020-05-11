@@ -1,70 +1,72 @@
-﻿using Harmony;
-using PPL.CommonExtensions.Patches;
-using System;
+﻿using HarmonyLib;
+using PulsarPluginLoader.Patches;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection.Emit;
-using System.Text;
-using static PPL.CommonExtensions.Patches.HarmonyHelpers;
+using UnityEngine;
+using static PulsarPluginLoader.Patches.HarmonyHelpers;
 
 namespace InsaneFire
 {
-    public static class Numbers
+    /*[HarmonyPatch(typeof(PLFire), "Update")]
+    public static class FireCapFix
+    {
+        private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, ILGenerator generator)
         {
-        public static int FireCap = 10000;
-        public static float SpreadRatePercent = 0.25f;
-    //    public static float PlayerDamage = 50;
+            List<CodeInstruction> targetSequence = new List<CodeInstruction>()
+            {
+                new CodeInstruction(OpCodes.Callvirt, AccessTools.Method(typeof(PLShipInfo), "CountNonNullFires")),
+                new CodeInstruction(OpCodes.Ldc_I4_S, 20),
+            };
+
+            List<CodeInstruction> injectedSequence = new List<CodeInstruction>()
+            {
+                new CodeInstruction(OpCodes.Callvirt, AccessTools.Method(typeof(PLShipInfo), "CountNonNullFires")),
+                new CodeInstruction(OpCodes.Ldfld, Global.FireCap),
+            };
+
+            return PatchBySequence(instructions, targetSequence, injectedSequence, patchMode: PatchMode.REPLACE);
         }
-    //[HarmonyPatch(typeof(PLFire), "Update")]
-    //public static class FireCapFix
-    //{
-    //    private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, ILGenerator generator)
-    //    {
-    //        List<CodeInstruction> targetSequence = new List<CodeInstruction>()
-    //{
-    //    new CodeInstruction(OpCodes.Ldc_I4_S, 20),
-    //};
-
-    //        List<CodeInstruction> injectedSequence = new List<CodeInstruction>()
-    //{
-    //    new CodeInstruction(OpCodes.Ldc_I4, Numbers.FireCap),
-    //};
-
-    //        return HarmonyHelpers.PatchBySequence(instructions, targetSequence, injectedSequence, patchMode: PatchMode.REPLACE).ToList();
-    //    }
-    //}
+    }*/
     [HarmonyPatch(typeof(PLFire), "Update")]
-    class FireCapFix
+    class MainUpdatePatch
     {
         static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
         {
             List<CodeInstruction> instructionList = instructions.ToList();
 
-            instructionList[85].opcode = OpCodes.Ldc_I4;
-            instructionList[85].operand = Numbers.FireCap;
+            instructionList[97].opcode = OpCodes.Ldsfld;
+            instructionList[97].operand = AccessTools.Field(typeof(Global), "FireCap");
 
+            //instructionList[97].opcode = OpCodes.Ldc_I4 ;
+            //instructionList[97].operand = Global.FireCap;
+
+            //instructionList[170].operand = Global.O2Consumption;
+            instructionList[170].opcode = OpCodes.Ldsfld;
+            instructionList[170].operand = AccessTools.Field(typeof(Global), "O2Consumption");
+            
             return instructionList.AsEnumerable();
         }
     }
-    //[HarmonyPatch(typeof(PLFire), "Update")]
-    //public static class SpreadRateFix
-    //{
-    //    private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, ILGenerator generator)
-    //    {
-    //        List<CodeInstruction> targetSequence = new List<CodeInstruction>()
-    //{
-    //    new CodeInstruction(OpCodes.Ldc_R4, 0.006),
-    //};
+    /*[HarmonyPatch(typeof(PLFire), "Update")]
+    public static class SpreadRateFix
+    {
+        private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, ILGenerator generator)
+        {
+            List<CodeInstruction> targetSequence = new List<CodeInstruction>()
+            {
+                new CodeInstruction(OpCodes.Ldc_R4, 0.006),
+            };
 
-    //        List<CodeInstruction> injectedSequence = new List<CodeInstruction>()
-    //{
-    //    new CodeInstruction(OpCodes.Ldc_R4, Numbers.SpreadRatePercent),
-    //};
+            List<CodeInstruction> injectedSequence = new List<CodeInstruction>()
+            {
+                new CodeInstruction(OpCodes.Ldfld, Global.SpreadRatePercent),
+            };
 
-    //        return HarmonyHelpers.PatchBySequence(instructions, targetSequence, injectedSequence, patchMode: PatchMode.REPLACE).ToList();
-    //    }
-    //}
-    [HarmonyPatch(typeof(PLFire), "Update")]
+            return PatchBySequence(instructions, targetSequence, injectedSequence, patchMode: PatchMode.REPLACE);
+        }
+    }*/
+    /*[HarmonyPatch(typeof(PLFire), "Update")]
     class SpreadRateFix
     {
         static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
@@ -75,35 +77,72 @@ namespace InsaneFire
 
             return instructionList.AsEnumerable();
         }
+    }*/
+    /*[HarmonyPatch(typeof(PLFire), "Update")]
+    public static class FireDamageFix
+    {
+        private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, ILGenerator generator)
+        {
+            List<CodeInstruction> targetSequence = new List<CodeInstruction>()
+            {
+                new CodeInstruction(OpCodes.Ldc_R4, 15),
+            };
+
+            List<CodeInstruction> injectedSequence = new List<CodeInstruction>()
+            {
+                new CodeInstruction(OpCodes.Ldfld, Global.PlayerDamage),
+            };
+
+            return PatchBySequence(instructions, targetSequence, injectedSequence, patchMode: PatchMode.REPLACE).ToList();
+        }
+    }*/
+    /*[HarmonyPatch(typeof(PLFire), "Update")]
+    class FireDamageFix
+    {
+        static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
+        {
+            List<CodeInstruction> instructionList = instructions.ToList();
+
+            instructionList[230].operand = Numbers.PlayerDamage;
+
+            return instructionList.AsEnumerable();
+        }
+    }*/
+    [HarmonyPatch(typeof(PLFire), "Spread")]
+    class Spreadlocationfix
+    {
+        static bool Prefix(PLFire __instance)
+        {
+            bool tryspread = true;
+            Vector3 inOffset = new Vector3();
+            while (tryspread)
+            {
+                inOffset = UnityEngine.Random.onUnitSphere * 2f;
+                inOffset.y = 0f;
+                tryspread = false;
+                foreach (PLFire fire in __instance.MyShip.AllFires.Values)
+                {
+                    float distance = Vector3.Distance(fire.transform.position, inOffset);
+                    if (distance <= 1f)
+                    {
+                        tryspread = true;
+                        break;
+                    }
+                }
+            }
+            if (PLServer.Instance != null)
+            {
+                PLServer.Instance.CreateFireAtOffset(__instance, inOffset);
+            }
+            return false;
+        }
     }
-    //[HarmonyPatch(typeof(PLFire), "Update")]
-    //public static class FireDamageFix
-    //{
-    //    private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, ILGenerator generator)
-    //    {
-    //        List<CodeInstruction> targetSequence = new List<CodeInstruction>()
-    //{
-    //    new CodeInstruction(OpCodes.Ldc_R4, 15),
-    //};
-
-    //        List<CodeInstruction> injectedSequence = new List<CodeInstruction>()
-    //{
-    //    new CodeInstruction(OpCodes.Ldc_R4, Numbers.PlayerDamage),
-    //};
-
-    //        return HarmonyHelpers.PatchBySequence(instructions, targetSequence, injectedSequence, patchMode: PatchMode.REPLACE).ToList();
-    //    }
-    //}
-    //[HarmonyPatch(typeof(PLFire), "Update")]
-    //class FireDamageFix
-    //{
-    //    static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
-    //    {
-    //        List<CodeInstruction> instructionList = instructions.ToList();
-
-    //        instructionList[230].operand = Numbers.PlayerDamage;
-
-    //        return instructionList.AsEnumerable();
-    //    }
-    //}
+    [HarmonyPatch(typeof(PLFire), "Update")]
+    class HasSpreadFix
+    {
+        static void Postfix(PLFire __instance)
+        {
+            __instance.HasSpread = false;
+        }
+    }
 }
