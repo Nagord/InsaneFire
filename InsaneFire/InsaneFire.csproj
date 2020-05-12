@@ -55,6 +55,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Commands.cs" />
     <Compile Include="Global.cs" />
     <Compile Include="Plugin.cs" />
     <Compile Include="InsaneFire.cs" />

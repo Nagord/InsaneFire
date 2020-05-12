@@ -1,10 +1,8 @@
 ﻿using HarmonyLib;
-using PulsarPluginLoader.Patches;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection.Emit;
 using UnityEngine;
-using static PulsarPluginLoader.Patches.HarmonyHelpers;
 
 namespace InsaneFire
 {
@@ -22,7 +20,25 @@ namespace InsaneFire
             List<CodeInstruction> injectedSequence = new List<CodeInstruction>()
             {
                 new CodeInstruction(OpCodes.Callvirt, AccessTools.Method(typeof(PLShipInfo), "CountNonNullFires")),
-                new CodeInstruction(OpCodes.Ldfld, Global.FireCap),
+                new CodeInstruction(OpCodes.Ldsfld, Global.FireCap),
+            };
+
+            return PatchBySequence(instructions, targetSequence, injectedSequence, patchMode: PatchMode.REPLACE);
+        }
+    }*/
+    /*[HarmonyPatch(typeof(PLFire), "Update")]
+    public static class o2ConsumptionPatch
+    {
+        private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, ILGenerator generator)
+        {
+            List<CodeInstruction> targetSequence = new List<CodeInstruction>()
+            {
+                new CodeInstruction(OpCodes.Ldc_R4, 0.0005f),
+            };
+
+            List<CodeInstruction> injectedSequence = new List<CodeInstruction>()
+            {
+                new CodeInstruction(OpCodes.Ldsfld, Global.FireCap),
             };
 
             return PatchBySequence(instructions, targetSequence, injectedSequence, patchMode: PatchMode.REPLACE);
@@ -35,12 +51,14 @@ namespace InsaneFire
         {
             List<CodeInstruction> instructionList = instructions.ToList();
 
+            //fix fire cap
             instructionList[97].opcode = OpCodes.Ldsfld;
             instructionList[97].operand = AccessTools.Field(typeof(Global), "FireCap");
 
             //instructionList[97].opcode = OpCodes.Ldc_I4 ;
             //instructionList[97].operand = Global.FireCap;
 
+            //fix o2 comsumption
             //instructionList[170].operand = Global.O2Consumption;
             instructionList[170].opcode = OpCodes.Ldsfld;
             instructionList[170].operand = AccessTools.Field(typeof(Global), "O2Consumption");
@@ -60,7 +78,7 @@ namespace InsaneFire
 
             List<CodeInstruction> injectedSequence = new List<CodeInstruction>()
             {
-                new CodeInstruction(OpCodes.Ldfld, Global.SpreadRatePercent),
+                new CodeInstruction(OpCodes.Ldsfld, Global.SpreadRatePercent),
             };
 
             return PatchBySequence(instructions, targetSequence, injectedSequence, patchMode: PatchMode.REPLACE);
