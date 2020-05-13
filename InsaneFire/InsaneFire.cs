@@ -131,6 +131,10 @@ namespace InsaneFire
     {
         static bool Prefix(PLFire __instance)
         {
+            if(!Global.PluginIsOn)
+            {
+                return true;
+            }
             bool tryspread = true;
             Vector3 inOffset = new Vector3();
             while (tryspread)
@@ -160,7 +164,10 @@ namespace InsaneFire
     {
         static void Postfix(PLFire __instance)
         {
-            __instance.HasSpread = false;
+            if (Global.PluginIsOn)
+            {
+                __instance.HasSpread = false;
+            }
         }
     }
 }
