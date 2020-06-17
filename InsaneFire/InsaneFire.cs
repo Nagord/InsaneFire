@@ -60,8 +60,8 @@ namespace InsaneFire
 
             //fix o2 comsumption
             //instructionList[170].operand = Global.O2Consumption;
-            instructionList[170].opcode = OpCodes.Ldsfld;
-            instructionList[170].operand = AccessTools.Field(typeof(Global), "O2Consumption");
+            instructionList[169].opcode = OpCodes.Ldsfld;
+            instructionList[169].operand = AccessTools.Field(typeof(Global), "O2Consumption");
             
             return instructionList.AsEnumerable();
         }
@@ -145,7 +145,7 @@ namespace InsaneFire
                 foreach (PLFire fire in __instance.MyShip.AllFires.Values)
                 {
                     float distance = Vector3.Distance(fire.transform.position, inOffset);
-                    if (distance <= 1f)
+                    if (distance <= 1.5f)
                     {
                         tryspread = true;
                         break;

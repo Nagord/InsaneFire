@@ -1,5 +1,4 @@
 ﻿using PulsarPluginLoader.Utilities;
-using System.Diagnostics;
 
 namespace InsaneFire
 {

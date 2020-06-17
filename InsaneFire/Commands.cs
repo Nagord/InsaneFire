@@ -1,6 +1,6 @@
-﻿using PulsarPluginLoader.Chat.Commands;
+﻿using PulsarPluginLoader;
+using PulsarPluginLoader.Chat.Commands;
 using PulsarPluginLoader.Utilities;
-using UnityEngine;
 
 namespace InsaneFire
 {
@@ -47,11 +47,12 @@ namespace InsaneFire
                     break;
                 case "o2rate":
                 case "o2r":
-                    if (ArgConvertSuccess)
+                    if (FloatConvertSuccess)
                     {
                         Global.O2Consumption = CommandFloat * .0005f;
                         Global.SavedO2Consumption = Global.O2Consumption;
                         Global.SaveSettings();
+                        ModMessage.SendRPC("Dragon.InsaneFire", "InsaneFire.O2Rate", PhotonTargets.Others, new object[] { Global.O2Consumption });//players who join after last message do not know new o2consumptionrate
                         string o2percent = (CommandFloat * 100).ToString("000") + "%";
                         Messaging.Notification($"Set O2 consumption to {o2percent}");
                     }
@@ -72,13 +73,17 @@ namespace InsaneFire
                         Global.FireCap = 20;
                         Global.O2Consumption = 0.0005f;
                     }
+                    foreach(PhotonPlayer player in ModMessageHelper.Instance.PlayersWithMods.Keys)//players who join after last message do not know new o2consumptionrate
+                    {
+                        ModMessage.SendRPC("Dragon.InsaneFire", "InsaneFire.O2Rate", player, new object[] { Global.O2Consumption });
+                    }
                     Global.SaveSettings();
                     string message = Global.PluginIsOn ? "On" : "Off";
                     Messaging.Notification($"Plugin is now {message}");
                     break;
                 case "dbg":
                     Global.GetSettings(out bool b, out int i, out float f);
-                    Messaging.Notification($"on: {b} Firecap: {i} O2Cons: {f}\nCashed: {Global.SavedFireCap} {Global.SavedO2Consumption}");
+                    Messaging.Notification($"on: {b} Firecap: {i} O2Cons: {f}\nCached: {Global.SavedFireCap} {Global.SavedO2Consumption}\nCurrent: {Global.PluginIsOn} {Global.FireCap} {Global.O2Consumption}");
                     break;
                 default:
                     Messaging.Notification("no Subcommand Detected. Subcommands: limit, o2Rate, toggle, dbg. capitalized letters can be initialized");
