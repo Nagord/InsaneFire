@@ -19,6 +19,11 @@ namespace InsaneFire
 
         public bool Execute(string arguments)
         {
+            if(!PhotonNetwork.isMasterClient)
+            {
+                Messaging.Notification("Must be Host to use commands");
+                return false;
+            }
             string[] Args = arguments.Split(' ');
             bool ArgConvertSuccess = false;
             bool FloatConvertSuccess = false;
@@ -75,7 +80,10 @@ namespace InsaneFire
                     }
                     foreach(PhotonPlayer player in ModMessageHelper.Instance.PlayersWithMods.Keys)//players who join after last message do not know new o2consumptionrate
                     {
-                        ModMessage.SendRPC("Dragon.InsaneFire", "InsaneFire.O2Rate", player, new object[] { Global.O2Consumption });
+                        if (ModMessageHelper.Instance.GetPlayerMods(player).Contains(ModMessageHelper.Instance.GetModName("Max_Players")))
+                        {
+                            ModMessage.SendRPC("Dragon.InsaneFire", "InsaneFire.O2Rate", player, new object[] { Global.O2Consumption });
+                        }
                     }
                     Global.SaveSettings();
                     string message = Global.PluginIsOn ? "On" : "Off";
