@@ -17,7 +17,7 @@ namespace InsaneFire
             return "controls subcommands.";
         }
 
-        public bool Execute(string arguments)
+        public bool Execute(string arguments, int SenderID)
         {
             if(!PhotonNetwork.isMasterClient)
             {
@@ -80,7 +80,7 @@ namespace InsaneFire
                     }
                     foreach(PhotonPlayer player in ModMessageHelper.Instance.PlayersWithMods.Keys)//players who join after last message do not know new o2consumptionrate
                     {
-                        if (ModMessageHelper.Instance.GetPlayerMods(player).Contains(ModMessageHelper.Instance.GetModName("Max_Players")))
+                        if (ModMessageHelper.Instance.GetPlayerMods(player).Contains(ModMessageHelper.Instance.GetModName("InsaneFire")))
                         {
                             ModMessage.SendRPC("Dragon.InsaneFire", "InsaneFire.O2Rate", player, new object[] { Global.O2Consumption });
                         }
@@ -97,6 +97,11 @@ namespace InsaneFire
                     Messaging.Notification("no Subcommand Detected. Subcommands: limit, o2Rate, toggle, dbg. capitalized letters can be initialized");
                     break;
             }
+            return false;
+        }
+
+        public bool PublicCommand()
+        {
             return false;
         }
 

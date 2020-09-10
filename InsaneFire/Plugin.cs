@@ -12,7 +12,7 @@ namespace InsaneFire
 
         public override string Name => "InsaneFire";
 
-        public override int MPFunctionality => (int)MPFunction.HostApproved;
+        public override int MPFunctionality => (int)MPFunction.HostOnly;
 
         public override string HarmonyIdentifier()
         {
