@@ -1,4 +1,5 @@
-﻿using PulsarPluginLoader.Utilities;
+﻿using HarmonyLib;
+using PulsarPluginLoader.Utilities;
 
 namespace InsaneFire
 {
@@ -26,7 +27,7 @@ namespace InsaneFire
                 pluginstatesetting = true;
                 firecap = 10000;
                 o2consumption = 0.0005f;
-                Messaging.Notification("Couldn't load settings");
+                Logger.Info("Couldn't load settings for InsaneFire");
             }
             return (worked[0] && worked[1] && worked[2]);
         }
@@ -34,6 +35,14 @@ namespace InsaneFire
         {
             string settings = $"{PluginIsOn} {SavedFireCap} {O2Consumption}";
             PLXMLOptionsIO.Instance.CurrentOptions.SetStringValue("InsaneFireSettings", settings);
+        }
+    }
+    [HarmonyPatch(typeof(PLServer), "Start")]
+    class loadsettings
+    {
+        static void Postfix()
+        {
+            Global.GetSettings(out Global.PluginIsOn, out Global.SavedFireCap, out Global.SavedO2Consumption);
         }
     }
 }

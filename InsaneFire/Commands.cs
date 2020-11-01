@@ -8,7 +8,6 @@ namespace InsaneFire
     {
         public string[] CommandAliases()
         {
-            Global.GetSettings(out Global.PluginIsOn, out Global.SavedFireCap, out Global.SavedO2Consumption);
             return new string[] { "insanefire" , "if" };
         }
 

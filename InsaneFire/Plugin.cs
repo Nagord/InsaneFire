@@ -4,11 +4,18 @@ namespace InsaneFire
 {
     public class Plugin : PulsarPlugin
     {
-        public override string Version => "0.4.0";
+        public override string Version => "1.4.1";
 
         public override string Author => "Dragon";
 
         public override string ShortDescription => "Makes Fire Insane";
+
+        public override string LongDescription => "-Modifies fire cap from 20 to 10,000." +
+            "\n-Makes fire nodes spread more than once, as opposed to once per node, removing the snake effect" +
+            "\n-Modifies oxygen consumption per fire." +
+            "\n-Provides Commands for customization of the mod" +
+            "\n-Allows toggling between moddified fire and vanilla fire" +
+            "\n-Saves and loads settings automatically.";
 
         public override string Name => "InsaneFire";
 
