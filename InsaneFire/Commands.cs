@@ -26,11 +26,11 @@ namespace InsaneFire
             string[] Args = arguments.Split(' ');
             bool ArgConvertSuccess = false;
             bool FloatConvertSuccess = false;
-            int commandarg = 0;
+            int CommandArg = 0;
             float CommandFloat = 0f;
             if (Args.Length > 1)
             {
-                ArgConvertSuccess = int.TryParse(Args[1], out commandarg);
+                ArgConvertSuccess = int.TryParse(Args[1], out CommandArg);
                 FloatConvertSuccess = float.TryParse(Args[1], out CommandFloat);
             }
             
@@ -39,10 +39,10 @@ namespace InsaneFire
                 case "limit":
                     if(ArgConvertSuccess)
                     {
-                        Global.SavedFireCap = commandarg;
-                        Global.FireCap = commandarg;
+                        Global.SavedFireCap = CommandArg;
+                        Global.FireCap = CommandArg;
                         Global.SaveSettings();
-                        Messaging.Notification($"Set fire limit to {commandarg}");
+                        Messaging.Notification($"Set fire limit to {CommandArg}");
                     }
                     else
                     {
@@ -106,7 +106,7 @@ namespace InsaneFire
 
         public string UsageExample()
         {
-            return $"{CommandAliases()[0]} ( limit | o2Rate | toggle ) (ammount)";
+            return $"/{CommandAliases()[0]} ( limit | o2Rate | toggle ) (ammount)";
         }
     }
 }

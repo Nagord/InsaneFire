@@ -4,7 +4,7 @@ namespace InsaneFire
 {
     public class Plugin : PulsarPlugin
     {
-        public override string Version => "1.4.1";
+        public override string Version => "1.4.2";
 
         public override string Author => "Dragon";
 

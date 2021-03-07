@@ -1,69 +1,48 @@
 ﻿using HarmonyLib;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection.Emit;
 using UnityEngine;
+using static PulsarPluginLoader.Patches.HarmonyHelpers;
 
 namespace InsaneFire
 {
-    /*[HarmonyPatch(typeof(PLFire), "Update")]
-    public static class FireCapFix
-    {
-        private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, ILGenerator generator)
-        {
-            List<CodeInstruction> targetSequence = new List<CodeInstruction>()
-            {
-                new CodeInstruction(OpCodes.Callvirt, AccessTools.Method(typeof(PLShipInfo), "CountNonNullFires")),
-                new CodeInstruction(OpCodes.Ldc_I4_S, 20),
-            };
-
-            List<CodeInstruction> injectedSequence = new List<CodeInstruction>()
-            {
-                new CodeInstruction(OpCodes.Callvirt, AccessTools.Method(typeof(PLShipInfo), "CountNonNullFires")),
-                new CodeInstruction(OpCodes.Ldsfld, Global.FireCap),
-            };
-
-            return PatchBySequence(instructions, targetSequence, injectedSequence, patchMode: PatchMode.REPLACE);
-        }
-    }*/
-    /*[HarmonyPatch(typeof(PLFire), "Update")]
-    public static class o2ConsumptionPatch
-    {
-        private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, ILGenerator generator)
-        {
-            List<CodeInstruction> targetSequence = new List<CodeInstruction>()
-            {
-                new CodeInstruction(OpCodes.Ldc_R4, 0.0005f),
-            };
-
-            List<CodeInstruction> injectedSequence = new List<CodeInstruction>()
-            {
-                new CodeInstruction(OpCodes.Ldsfld, Global.FireCap),
-            };
-
-            return PatchBySequence(instructions, targetSequence, injectedSequence, patchMode: PatchMode.REPLACE);
-        }
-    }*/
     [HarmonyPatch(typeof(PLFire), "Update")]
     class MainUpdatePatch
     {
         static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
         {
-            List<CodeInstruction> instructionList = instructions.ToList();
+            List<CodeInstruction> targetSequence1 = new List<CodeInstruction>()
+            {
+                //new CodeInstruction(OpCodes.Callvirt, AccessTools.Method(typeof(PLShipInfo), "CountNonNullFires")),
+                new CodeInstruction(OpCodes.Ldc_I4_S, (sbyte)20),
+            };
 
-            //fix fire cap
-            instructionList[97].opcode = OpCodes.Ldsfld;
-            instructionList[97].operand = AccessTools.Field(typeof(Global), "FireCap");
+            List<CodeInstruction> injectedSequence1 = new List<CodeInstruction>()
+            {
+                //new CodeInstruction(OpCodes.Callvirt, AccessTools.Method(typeof(PLShipInfo), "CountNonNullFires")),
+                new CodeInstruction(OpCodes.Ldsfld, AccessTools.Field(typeof(Global), "FireCap")),
+            };
 
-            //instructionList[97].opcode = OpCodes.Ldc_I4 ;
-            //instructionList[97].operand = Global.FireCap;
+            IEnumerable<CodeInstruction> Modified1st = PatchBySequence(instructions, targetSequence1, injectedSequence1, patchMode: PatchMode.REPLACE);
 
-            //fix o2 comsumption
-            //instructionList[170].operand = Global.O2Consumption;
-            instructionList[169].opcode = OpCodes.Ldsfld;
-            instructionList[169].operand = AccessTools.Field(typeof(Global), "O2Consumption");
-            
-            return instructionList.AsEnumerable();
+            List<CodeInstruction> targetSequence2 = new List<CodeInstruction>()
+            {
+                new CodeInstruction(OpCodes.Ldc_R4, 0.0005f),
+            };
+
+            List<CodeInstruction> injectedSequence2 = new List<CodeInstruction>()
+            {
+                new CodeInstruction(OpCodes.Ldsfld, AccessTools.Field(typeof(Global), "O2Consumption")),
+            };
+
+            return PatchBySequence(Modified1st, targetSequence2, injectedSequence2, patchMode: PatchMode.REPLACE);
+        }
+        static void Postfix(PLFire __instance)
+        {
+            if (Global.PluginIsOn)
+            {
+                __instance.HasSpread = false;
+            }
         }
     }
     /*[HarmonyPatch(typeof(PLFire), "Update")]
@@ -131,6 +110,7 @@ namespace InsaneFire
     {
         static bool Prefix(PLFire __instance)
         {
+            PulsarPluginLoader.Utilities.Logger.Info("Spreading");
             if(!Global.PluginIsOn)
             {
                 return true;
@@ -157,17 +137,6 @@ namespace InsaneFire
                 PLServer.Instance.CreateFireAtOffset(__instance, inOffset);
             }
             return false;
-        }
-    }
-    [HarmonyPatch(typeof(PLFire), "Update")]
-    class HasSpreadFix
-    {
-        static void Postfix(PLFire __instance)
-        {
-            if (Global.PluginIsOn)
-            {
-                __instance.HasSpread = false;
-            }
         }
     }
 }
