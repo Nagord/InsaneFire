@@ -1,10 +1,10 @@
-﻿using PulsarPluginLoader;
+﻿using PulsarModLoader;
 
 namespace InsaneFire
 {
-    public class Plugin : PulsarPlugin
+    public class Plugin : PulsarMod
     {
-        public override string Version => "1.4.2";
+        public override string Version => "1.4.3";
 
         public override string Author => "Dragon";
 

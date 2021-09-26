@@ -1,27 +1,26 @@
-﻿using PulsarPluginLoader;
-using PulsarPluginLoader.Chat.Commands;
-using PulsarPluginLoader.Utilities;
+﻿using PulsarModLoader;
+using PulsarModLoader.Chat.Commands.CommandRouter;
+using PulsarModLoader.Utilities;
 
 namespace InsaneFire
 {
-    class Commands : IChatCommand
+    class Commands : ChatCommand
     {
-        public string[] CommandAliases()
+        public override string[] CommandAliases()
         {
             return new string[] { "insanefire" , "if" };
         }
 
-        public string Description()
+        public override string Description()
         {
             return "controls subcommands.";
         }
 
-        public bool Execute(string arguments, int SenderID)
+        public override void Execute(string arguments)
         {
             if(!PhotonNetwork.isMasterClient)
             {
                 Messaging.Notification("Must be Host to use commands");
-                return false;
             }
             string[] Args = arguments.Split(' ');
             bool ArgConvertSuccess = false;
@@ -96,17 +95,11 @@ namespace InsaneFire
                     Messaging.Notification("no Subcommand Detected. Subcommands: limit, o2Rate, toggle, dbg. capitalized letters can be initialized");
                     break;
             }
-            return false;
         }
 
-        public bool PublicCommand()
+        public override string[] UsageExamples()
         {
-            return false;
-        }
-
-        public string UsageExample()
-        {
-            return $"/{CommandAliases()[0]} ( limit | o2Rate | toggle ) (ammount)";
+            return new string[] {$"/{CommandAliases()[0]} ( limit | o2Rate | toggle ) (ammount)"};
         }
     }
 }
