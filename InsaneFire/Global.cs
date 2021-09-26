@@ -1,5 +1,5 @@
 ﻿using HarmonyLib;
-using PulsarPluginLoader.Utilities;
+using PulsarModLoader.Utilities;
 
 namespace InsaneFire
 {
@@ -8,8 +8,6 @@ namespace InsaneFire
         public static bool PluginIsOn = true;
         public static int FireCap = 10000;
         public static int SavedFireCap = 10000;
-        //public static float SpreadRatePercent = 0.25f;
-        //public static float PlayerDamage = 50;
         public static float O2Consumption = 0.0005f;
         public static float SavedO2Consumption = 0.0005f;
         public static bool GetSettings(out bool pluginstatesetting, out int firecap, out float o2consumption)
