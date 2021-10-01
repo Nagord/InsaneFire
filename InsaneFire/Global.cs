@@ -1,4 +1,4 @@
-﻿using HarmonyLib;
+﻿using PulsarModLoader;
 using PulsarModLoader.Utilities;
 
 namespace InsaneFire
@@ -31,16 +31,52 @@ namespace InsaneFire
         }
         public static void SaveSettings()
         {
-            string settings = $"{PluginIsOn} {SavedFireCap} {O2Consumption}";
+            string settings = $"{PluginIsOn} {SavedFireCap} {SavedO2Consumption}";
             PLXMLOptionsIO.Instance.CurrentOptions.SetStringValue("InsaneFireSettings", settings);
         }
-    }
-    [HarmonyPatch(typeof(PLServer), "Start")]
-    class loadsettings
-    {
-        static void Postfix()
+
+        public static void Toggle()
         {
-            Global.GetSettings(out Global.PluginIsOn, out Global.SavedFireCap, out Global.SavedO2Consumption);
+            PluginIsOn = !PluginIsOn;
+            if (PluginIsOn)
+            {
+                Disable();
+            }
+            else
+            {
+                Enable();
+            }
+            if (PLServer.Instance != null)
+            {
+                string message = PluginIsOn ? "On" : "Off";
+                Messaging.Notification($"Plugin is now {message}");
+            }
+        }
+        public static void UpdatePlayerO2()
+        {
+            foreach (PhotonPlayer player in ModMessageHelper.Instance.PlayersWithMods.Keys)//players who join after last message do not know new o2consumptionrate
+            {
+                if (ModMessageHelper.Instance.GetPlayerMods(player).Contains(ModMessageHelper.Instance.GetModName("InsaneFire")))
+                {
+                    ModMessage.SendRPC("Dragon.InsaneFire", "InsaneFire.O2Rate", player, new object[] { O2Consumption });
+                }
+            }
+        }
+        public static void Enable()
+        {
+            PluginIsOn = true;
+            FireCap = SavedFireCap;
+            O2Consumption = SavedO2Consumption;
+            UpdatePlayerO2();
+            SaveSettings();
+        }
+        public static void Disable()
+        {
+            PluginIsOn = false;
+            FireCap = 20;
+            O2Consumption = 0.0005f;
+            UpdatePlayerO2();
+            SaveSettings();
         }
     }
 }

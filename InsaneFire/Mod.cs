@@ -2,9 +2,16 @@
 
 namespace InsaneFire
 {
-    public class Plugin : PulsarMod
+    public class Mod : PulsarMod
     {
-        public override string Version => "1.4.3";
+        public Mod()
+        {
+            Global.GetSettings(out Global.PluginIsOn, out Global.FireCap, out Global.O2Consumption);
+            Global.SavedFireCap = Global.FireCap;
+            Global.SavedO2Consumption = Global.O2Consumption;
+        }
+
+        public override string Version => "1.5.0";
 
         public override string Author => "Dragon";
 
@@ -25,6 +32,26 @@ namespace InsaneFire
         public override string HarmonyIdentifier()
         {
             return "Dragon.InsaneFire";
+        }
+
+        public override bool IsEnabled()
+        {
+            return Global.PluginIsOn;
+        }
+
+        public override bool CanBeDisabled()
+        {
+            return true;
+        }
+
+        public override void Disable()
+        {
+            Global.Disable();
+        }
+
+        public override void Enable()
+        {
+            Global.Enable();
         }
     }
 }

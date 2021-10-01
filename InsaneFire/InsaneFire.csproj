@@ -53,18 +53,23 @@
     <Reference Include="UnityEngine.CoreModule">
       <HintPath>D:\Program Files (x86)\Steam\steamapps\common\PULSARLostColony\PULSAR_LostColony_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
     </Reference>
+    <Reference Include="UnityEngine.IMGUIModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\PULSARLostColony\PULSAR_LostColony_Data\Managed\UnityEngine.IMGUIModule.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Commands.cs" />
     <Compile Include="Global.cs" />
+    <Compile Include="GUI.cs" />
     <Compile Include="ModMessages.cs" />
-    <Compile Include="Plugin.cs" />
+    <Compile Include="Mod.cs" />
     <Compile Include="InsaneFire.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>SET PLUGIN_DIR="D:\Program Files (x86)\Steam\steamapps\common\PULSARLostColony\PULSAR_LostColony_Data\Managed\Plugins\"
+    <PostBuildEvent>SET PLUGIN_DIR="D:\Program Files (x86)\Steam\steamapps\common\PULSARLostColony\Mods\"
 
 IF EXIST %25PLUGIN_DIR%25 (
     ECHO Copying DLLs to Plugins directory...

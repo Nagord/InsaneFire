@@ -65,27 +65,7 @@ namespace InsaneFire
                     }
                     break;
                 case "toggle":
-                    Global.PluginIsOn = !Global.PluginIsOn;
-                    if(Global.PluginIsOn)
-                    {
-                        Global.FireCap = Global.SavedFireCap;
-                        Global.O2Consumption = Global.SavedO2Consumption;
-                    }
-                    else
-                    {
-                        Global.FireCap = 20;
-                        Global.O2Consumption = 0.0005f;
-                    }
-                    foreach(PhotonPlayer player in ModMessageHelper.Instance.PlayersWithMods.Keys)//players who join after last message do not know new o2consumptionrate
-                    {
-                        if (ModMessageHelper.Instance.GetPlayerMods(player).Contains(ModMessageHelper.Instance.GetModName("InsaneFire")))
-                        {
-                            ModMessage.SendRPC("Dragon.InsaneFire", "InsaneFire.O2Rate", player, new object[] { Global.O2Consumption });
-                        }
-                    }
-                    Global.SaveSettings();
-                    string message = Global.PluginIsOn ? "On" : "Off";
-                    Messaging.Notification($"Plugin is now {message}");
+                    Global.Toggle();
                     break;
                 case "dbg":
                     Global.GetSettings(out bool b, out int i, out float f);
