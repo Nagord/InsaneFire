@@ -8,7 +8,7 @@ namespace InsaneFire
     {
         public override string[] CommandAliases()
         {
-            return new string[] { "insanefire" , "if" };
+            return new string[] { "insanefire", "if" };
         }
 
         public override string Description()
@@ -18,30 +18,21 @@ namespace InsaneFire
 
         public override void Execute(string arguments)
         {
-            if(!PhotonNetwork.isMasterClient)
+            if (!PhotonNetwork.isMasterClient && arguments != "dbg")
             {
                 Messaging.Notification("Must be Host to use commands");
             }
+
             string[] Args = arguments.Split(' ');
-            bool ArgConvertSuccess = false;
-            bool FloatConvertSuccess = false;
-            int CommandArg = 0;
-            float CommandFloat = 0f;
-            if (Args.Length > 1)
-            {
-                ArgConvertSuccess = int.TryParse(Args[1], out CommandArg);
-                FloatConvertSuccess = float.TryParse(Args[1], out CommandFloat);
-            }
-            
-            switch(Args[0].ToLower())
+
+            switch (Args[0].ToLower())
             {
                 case "limit":
-                    if(ArgConvertSuccess)
+                    if (Args.Length > 1 && int.TryParse(Args[1], out int newFireCap))
                     {
-                        Global.SavedFireCap = CommandArg;
-                        Global.FireCap = CommandArg;
-                        Global.SaveSettings();
-                        Messaging.Notification($"Set fire limit to {CommandArg}");
+                        Global.SavedFireCap.Value = newFireCap;
+                        Global.FireCap = newFireCap;
+                        Messaging.Notification($"Set fire limit to {newFireCap}");
                     }
                     else
                     {
@@ -50,14 +41,12 @@ namespace InsaneFire
                     break;
                 case "o2rate":
                 case "o2r":
-                    if (FloatConvertSuccess)
+                    if (Args.Length > 1 && float.TryParse(Args[1], out float newO2Rate))
                     {
-                        Global.O2Consumption = CommandFloat * .0005f;
-                        Global.SavedO2Consumption = Global.O2Consumption;
-                        Global.SaveSettings();
-                        ModMessage.SendRPC("Dragon.InsaneFire", "InsaneFire.O2Rate", PhotonTargets.Others, new object[] { Global.O2Consumption });//players who join after last message do not know new o2consumptionrate
-                        string o2percent = (CommandFloat * 100).ToString("000") + "%";
-                        Messaging.Notification($"Set O2 consumption to {o2percent}");
+                        Global.O2Consumption = newO2Rate * .0005f;
+                        Global.SavedO2Consumption.Value = Global.O2Consumption;
+                        ModMessage.SendRPC(Mod.CachedHarmonyIdent, O2Rate.ModMessageName, PhotonTargets.Others, new object[] { Global.O2Consumption });
+                        Messaging.Notification($"Set O2 consumption to {(newO2Rate * 100).ToString("000") + "%"}");
                     }
                     else
                     {
@@ -68,8 +57,7 @@ namespace InsaneFire
                     Global.Toggle();
                     break;
                 case "dbg":
-                    Global.GetSettings(out bool b, out int i, out float f);
-                    Messaging.Notification($"on: {b} Firecap: {i} O2Cons: {f}\nCached: {Global.SavedFireCap} {Global.SavedO2Consumption}\nCurrent: {Global.PluginIsOn} {Global.FireCap} {Global.O2Consumption}");
+                    Messaging.Notification($"Saved: on: {Global.ModEnabled} Firecap: {Global.SavedFireCap} O2Cons: {Global.SavedO2Consumption}\nCurrent: {Global.ModEnabled} {Global.FireCap} {Global.O2Consumption}");
                     break;
                 default:
                     Messaging.Notification("no Subcommand Detected. Subcommands: limit, o2Rate, toggle, dbg. capitalized letters can be initialized");
@@ -79,7 +67,7 @@ namespace InsaneFire
 
         public override string[] UsageExamples()
         {
-            return new string[] {$"/{CommandAliases()[0]} ( limit | o2Rate | toggle ) (ammount)"};
+            return new string[] { $"/{CommandAliases()[0]} ( limit | o2Rate | toggle ) (ammount)" };
         }
     }
 }

@@ -1,17 +1,17 @@
 ﻿using PulsarModLoader;
+using PulsarModLoader.MPModChecks;
 
 namespace InsaneFire
 {
     public class Mod : PulsarMod
     {
+        public static string CachedHarmonyIdent;
         public Mod()
         {
-            Global.GetSettings(out Global.PluginIsOn, out Global.FireCap, out Global.O2Consumption);
-            Global.SavedFireCap = Global.FireCap;
-            Global.SavedO2Consumption = Global.O2Consumption;
+            CachedHarmonyIdent = HarmonyIdentifier();
         }
 
-        public override string Version => "1.5.0";
+        public override string Version => "1.5.1";
 
         public override string Author => "Dragon";
 
@@ -27,16 +27,16 @@ namespace InsaneFire
 
         public override string Name => "InsaneFire";
 
-        public override int MPFunctionality => (int)MPFunction.HostOnly;
+        public override int MPRequirements => (int)MPRequirement.MatchVersion;
 
         public override string HarmonyIdentifier()
         {
-            return "Dragon.InsaneFire";
+            return $"{Author}.{Name}";
         }
 
         public override bool IsEnabled()
         {
-            return Global.PluginIsOn;
+            return Global.ModEnabled;
         }
 
         public override bool CanBeDisabled()

@@ -11,47 +11,48 @@ namespace InsaneFire
     {
         static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
         {
-            List<CodeInstruction> targetSequence1 = new List<CodeInstruction>()
+            List<CodeInstruction> targetSequence = new List<CodeInstruction>()
             {
-                //new CodeInstruction(OpCodes.Callvirt, AccessTools.Method(typeof(PLShipInfo), "CountNonNullFires")),
                 new CodeInstruction(OpCodes.Ldc_I4_S, (sbyte)20),
             };
 
-            List<CodeInstruction> injectedSequence1 = new List<CodeInstruction>()
+            List<CodeInstruction> injectedSequence = new List<CodeInstruction>()
             {
-                //new CodeInstruction(OpCodes.Callvirt, AccessTools.Method(typeof(PLShipInfo), "CountNonNullFires")),
                 new CodeInstruction(OpCodes.Ldsfld, AccessTools.Field(typeof(Global), "FireCap")),
             };
 
-            IEnumerable<CodeInstruction> Modified1st = PatchBySequence(instructions, targetSequence1, injectedSequence1, patchMode: PatchMode.REPLACE);
+            instructions = PatchBySequence(instructions, targetSequence, injectedSequence, patchMode: PatchMode.REPLACE);
 
-            List<CodeInstruction> targetSequence2 = new List<CodeInstruction>()
+
+
+            targetSequence = new List<CodeInstruction>()
             {
                 new CodeInstruction(OpCodes.Ldc_R4, 0.0005f),
             };
 
-            List<CodeInstruction> injectedSequence2 = new List<CodeInstruction>()
+            injectedSequence = new List<CodeInstruction>()
             {
                 new CodeInstruction(OpCodes.Ldsfld, AccessTools.Field(typeof(Global), "O2Consumption")),
             };
 
-            return PatchBySequence(Modified1st, targetSequence2, injectedSequence2, patchMode: PatchMode.REPLACE);
+            return PatchBySequence(instructions, targetSequence, injectedSequence, patchMode: PatchMode.REPLACE);
         }
+
         static void Postfix(PLFire __instance)
         {
-            if (Global.PluginIsOn)
+            if (Global.ModEnabled)
             {
                 __instance.HasSpread = false;
             }
         }
     }
+
     [HarmonyPatch(typeof(PLFire), "Spread")]
     class Spreadlocationfix
     {
         static bool Prefix(PLFire __instance)
         {
-            PulsarModLoader.Utilities.Logger.Info("Spreading");
-            if(!Global.PluginIsOn)
+            if(!Global.ModEnabled)
             {
                 return true;
             }
@@ -72,6 +73,8 @@ namespace InsaneFire
                     }
                 }
             }
+
+
             if (PLServer.Instance != null)
             {
                 PLServer.Instance.CreateFireAtOffset(__instance, inOffset);
