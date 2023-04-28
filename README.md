@@ -1,5 +1,8 @@
 # InsaneFire
 
+![image](https://user-images.githubusercontent.com/46509577/235048056-2f0cf3a9-87b7-401e-a5bd-a3de9b149862.png)
+
+
 ## Information
 For Game Version 1.2.03  
 For PML Version 0.11.1  
