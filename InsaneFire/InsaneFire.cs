@@ -10,6 +10,8 @@ namespace InsaneFire
     [HarmonyPatch(typeof(PLFire), "Update")]
     class MainUpdatePatch
     {
+
+        //Patchmethods for visibility detection
         public static Dictionary<PLFire, bool> RegisteredFires = new Dictionary<PLFire, bool>();
         static bool PatchMethod(PLRoomArea roomArea, PLFire inFire)
         {
@@ -17,12 +19,10 @@ namespace InsaneFire
             RegisteredFires.Add(inFire, Succession);
             return Succession;
         }
-
         static bool PatchMethodSuccession(PLRoomArea roomArea, PLFire inFire)
         {
             return RegisteredFires[inFire];
         }
-
         static bool PatchMethodEnd(PLRoomArea roomArea, PLFire inFire)
         {
             bool Succession = RegisteredFires[inFire];
@@ -61,6 +61,7 @@ namespace InsaneFire
             instructions = PatchBySequence(instructions, targetSequence, injectedSequence, patchMode: PatchMode.REPLACE);
 
 
+            //Visibility detection.
             MethodInfo visibleMethod = AccessTools.Method(typeof(PLRoomArea), "IsVisible");
             MethodInfo PatchMethodStart = AccessTools.Method(typeof(MainUpdatePatch), "PatchMethod");
             MethodInfo PatchMethodSuccession = AccessTools.Method(typeof(MainUpdatePatch), "PatchMethodSuccession");
@@ -96,6 +97,7 @@ namespace InsaneFire
             return PatchBySequence(instructions, targetSequence, injectedSequence, patchMode: PatchMode.REPLACE);
         }
 
+        //Spread stopping
         static void Postfix(PLFire __instance)
         {
             if (Global.ModEnabled)
@@ -105,6 +107,7 @@ namespace InsaneFire
         }
     }
 
+    //Modifies spread to not get too clost to existing fires.
     [HarmonyPatch(typeof(PLFire), "Spread")]
     class Spreadlocationfix
     {
