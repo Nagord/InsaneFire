@@ -11,15 +11,18 @@ namespace InsaneFire
     class MainUpdatePatch
     {
 
-        //Patchmethods for visibility detection
-        public static Dictionary<PLFire, bool> RegisteredFires = new Dictionary<PLFire, bool>();
+        //Patchmethods for Fire node Visibility Raycasting
+        //public static Dictionary<PLFire, bool> RegisteredFires = new Dictionary<PLFire, bool>();
         static bool PatchMethod(PLRoomArea roomArea, PLFire inFire)
         {
-            bool Succession = roomArea.IsVisible() && !Physics.Linecast(PLCameraSystem.GetCenterEyeAnchor().position, inFire.transform.position);
-            RegisteredFires.Add(inFire, Succession);
+            bool Succession = roomArea.IsVisible(); //&& !Physics.Linecast(PLCameraSystem.GetCenterEyeAnchor().position, inFire.transform.position);
+            inFire.gameObject.SetActive(Succession);
+            //RegisteredFires.Add(inFire, Succession);
             return Succession;
         }
-        static bool PatchMethodSuccession(PLRoomArea roomArea, PLFire inFire)
+
+
+        /*static bool PatchMethodSuccession(PLRoomArea roomArea, PLFire inFire)
         {
             return RegisteredFires[inFire];
         }
@@ -28,7 +31,7 @@ namespace InsaneFire
             bool Succession = RegisteredFires[inFire];
             RegisteredFires.Remove(inFire);
             return Succession;
-        }
+        }*/
 
         static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
         {
@@ -61,24 +64,27 @@ namespace InsaneFire
             instructions = PatchBySequence(instructions, targetSequence, injectedSequence, patchMode: PatchMode.REPLACE);
 
 
-            //Visibility detection.
+            //Fire node Visibility Raycasting and particle emmission modification.
             MethodInfo visibleMethod = AccessTools.Method(typeof(PLRoomArea), "IsVisible");
             MethodInfo PatchMethodStart = AccessTools.Method(typeof(MainUpdatePatch), "PatchMethod");
-            MethodInfo PatchMethodSuccession = AccessTools.Method(typeof(MainUpdatePatch), "PatchMethodSuccession");
-            MethodInfo PatchMethodEnd = AccessTools.Method(typeof(MainUpdatePatch), "PatchMethodEnd");
+            //MethodInfo PatchMethodSuccession = AccessTools.Method(typeof(MainUpdatePatch), "PatchMethodSuccession");
+            //MethodInfo PatchMethodEnd = AccessTools.Method(typeof(MainUpdatePatch), "PatchMethodEnd");
+            
             targetSequence = new List<CodeInstruction>()
             {
                 new CodeInstruction(OpCodes.Callvirt, visibleMethod),
             };
 
+            
             injectedSequence = new List<CodeInstruction>()
             {
                 new CodeInstruction(OpCodes.Ldarg_0),
                 new CodeInstruction(OpCodes.Call, PatchMethodStart),
             };
 
-            instructions = PatchBySequence(instructions, targetSequence, injectedSequence, patchMode: PatchMode.REPLACE);
+            return PatchBySequence(instructions, targetSequence, injectedSequence, patchMode: PatchMode.REPLACE);
 
+            /*
             injectedSequence = new List<CodeInstruction>()
             {
                 new CodeInstruction(OpCodes.Ldarg_0),
@@ -94,7 +100,7 @@ namespace InsaneFire
                 new CodeInstruction(OpCodes.Call, PatchMethodEnd),
             };
 
-            return PatchBySequence(instructions, targetSequence, injectedSequence, patchMode: PatchMode.REPLACE);
+            return PatchBySequence(instructions, targetSequence, injectedSequence, patchMode: PatchMode.REPLACE);*/
         }
 
         //Spread stopping

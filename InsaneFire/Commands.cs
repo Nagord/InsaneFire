@@ -57,7 +57,7 @@ namespace InsaneFire
                     Global.Toggle();
                     break;
                 case "dbg":
-                    Messaging.Notification($"Saved: on: {Global.ModEnabled} Firecap: {Global.SavedFireCap} O2Cons: {Global.SavedO2Consumption}\nCurrent: {Global.ModEnabled} {Global.FireCap} {Global.O2Consumption}\nFires: {MainUpdatePatch.RegisteredFires.Count}");
+                    Messaging.Notification($"Saved: on: {Global.ModEnabled} Firecap: {Global.SavedFireCap} O2Cons: {Global.SavedO2Consumption}\nCurrent: {Global.ModEnabled} {Global.FireCap} {Global.O2Consumption}\nFires: {PLEncounterManager.Instance.PlayerShip.AllFires.Count}");
                     break;
                 default:
                     Messaging.Notification("no Subcommand Detected. Subcommands: limit, o2Rate, toggle, dbg. capitalized letters can be initialized");
